@@ -8,11 +8,8 @@ const Layout = () => {
                     <NavLink className="h4 mt-5 mx-2" to="/">
                         首頁
                     </NavLink>
-                    <NavLink className="h4 mt-5 mx-2" to="/product">
-                        產品頁面
-                    </NavLink>
-                    <NavLink className="h4 mt-5 mx-2" to="/cart">
-                        購物車頁面
+                    <NavLink className="h4 mt-5 mx-2" to="/login">
+                        進入後台
                     </NavLink>
                 </nav>
             </header>

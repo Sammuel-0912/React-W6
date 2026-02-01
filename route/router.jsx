@@ -1,11 +1,10 @@
 import { createHashRouter } from "react-router-dom";
 
-import Home from '../views/Home';
 import NotFound from '../views/NotFound';
-import Product from '../views/Products';
+import Products from '../views/Products';
 import Layout from "../layout/Layout";
-import SingleProduct from "../views/SingleProduct";
-import Cart from "../views/Cart";
+import Checkout from "../views/Checkout";
+import Login from "../views/Login";
 
 const router = createHashRouter([
     {
@@ -14,19 +13,15 @@ const router = createHashRouter([
         children: [
             {
                 index: true,
-                element: <Home />
+                element: <Checkout />,
             },
             {
-                path: 'product',
-                element: <Product />
+                path: 'login',
+                element: <Login />,
             },
             {
-                path: 'product/:id',
-                element: <SingleProduct />
-            },
-            {
-                path: 'cart',
-                element: <Cart />
+                path: 'admin/products',
+                element: <Products />,
             },
         ],
     },
