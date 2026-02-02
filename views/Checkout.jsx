@@ -85,9 +85,11 @@ function Checkout() {
         try {
             const url = `${API_BASE}/api/${API_PATH}/cart/${id}`;
             await axios.delete(url);
+            alert("產品已成功刪除");
             getCart();
         } catch (error) {
             console.log(error.response.data);
+            
         }
     }
     //清空購物車
@@ -114,23 +116,29 @@ function Checkout() {
             console.log(error.response.data);
         }
     };
+    //結帳送出訂單
     const onSubmit = async (data) => {
         try {
             const url = `${API_BASE}/api/${API_PATH}/order`;
-            if (!cart.length) {
+            if (!cart.carts.length || cart.carts.length === 0) {
                 alert("購物車沒有商品，無法結帳");
                 return;
             }
+            setIsLoading(true);
             await axios.post(url, {
                 data: {
                     user: data,
                     message: data.message
                 }
-            })
+            });
+            alert("訂單已送出!")
             reset();
             getCart();
         } catch (error) {
             console.log("結帳失敗", error.response.data);
+            alert("結帳失敗，請稍後再試");
+        } finally {
+            setIsLoading(false);
         }
     };
     const openModal = async (id) => {
@@ -223,7 +231,7 @@ function Checkout() {
                                             setCartQuantity((pre) => (pre === 1 ? pre : pre - 1))
                                         }
                                     >
-                                        <i className="fa-solid fa-minus"></i>
+                                        <i className="fa-solid fa-minus">-</i>
                                     </button>
                                     <input
                                         className="form-control"
@@ -240,7 +248,7 @@ function Checkout() {
                                         aria-label="Decrease quantity"
                                         onClick={() => setCartQuantity((pre) => pre + 1)}
                                     >
-                                        <i className="fa-solid fa-plus"></i>
+                                        <i className="fa-solid fa-plus">+</i>
                                     </button>
                                 </div>
                             </>)}
@@ -380,6 +388,7 @@ function Checkout() {
                     className="btn btn-outline-danger"
                     type="button"
                     onClick={deleteAll}
+                    disabled={cart?.carts?.length === 0}
                 >
                     清空購物車
                 </button>
