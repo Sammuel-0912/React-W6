@@ -8,7 +8,7 @@ function Login() {
     const {
         register: registerLogin,
         handleSubmit: handleSubmitLogin,
-        formState: { errors: loginErrors },
+        formState: { errors: loginErrors, isValid },
     } = useForm();
 
     const [authData, setAuthData] = useState(null);
@@ -85,7 +85,13 @@ function Login() {
                             <label htmlFor="password">Password</label>
                             {loginErrors.password && <p className="text-danger mt-1">{loginErrors.password.message}</p>}
                         </div>
-                        <button className="btn btn-lg btn-primary w-100 mt-3" type="submit">
+                        <button className="btn btn-lg btn-primary w-100 mt-3" type="submit"
+                            disabled={!isValid}
+                            style={{
+                                backgroundColor: isValid ? "#4CAF50" : "#ccc",
+                                cursor: isValid ? "pointer" : "not-allowed" 
+                            }}
+                        >
                             登入
                         </button>
                     </form>
