@@ -89,7 +89,7 @@ function Checkout() {
             getCart();
         } catch (error) {
             console.log(error.response.data);
-            
+
         }
     }
     //清空購物車
@@ -183,7 +183,8 @@ function Checkout() {
                         strokeColor="white"
                         strokeWidth="5"
                         animationDuration="0.75"
-                        width="96"
+                        width={80}
+                        height={16}
                         visible={true}
                     />
                 </div>
@@ -208,7 +209,8 @@ function Checkout() {
                                         strokeColor="grey"
                                         strokeWidth="5"
                                         animationDuration="0.75"
-                                        width="96"
+                                        width={80}
+                                        height={16}
                                         visible={true}
                                     />
                                 </div>
@@ -258,7 +260,7 @@ function Checkout() {
                                 type="button"
                                 className="btn btn-primary"
                                 onClick={() => addToCart(product.id, cartQuantity)}
-                                disabled = {loadingProductId}
+                                disabled={loadingProductId}
                             >
                                 {loadingProductId ? "處理中..." : "加入購物車"}
                             </button>
@@ -309,7 +311,8 @@ function Checkout() {
                                                 strokeColor="grey"
                                                 strokeWidth="5"
                                                 animationDuration="0.75"
-                                                width="96"
+                                                width={80}
+                                                height={16}
                                                 visible={true}
                                             />
                                         ) : (
@@ -326,8 +329,10 @@ function Checkout() {
                                             <RotatingLines
                                                 strokeColor="#fff"
                                                 strokeWidth="5"
-                                                width="20"
+                                                width={80}
+                                                height={16}
                                                 visible={true}
+                                                color="grey"
                                             />
                                         ) : (
                                             <i className="bi bi-cart-fill"></i>
