@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createAsyncMessage } from "../slice/messageSlice";
+
 const API_BASE = import.meta.env.VITE_API_BASE;
 
 function Login() {
+
     const {
         register: registerLogin,
         handleSubmit: handleSubmitLogin,
@@ -12,7 +16,9 @@ function Login() {
     } = useForm();
 
     const [authData, setAuthData] = useState(null);
+
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleLogin = async (data) => {
         try {
@@ -21,7 +27,11 @@ function Login() {
             setAuthData({ token, expired });
 
         } catch (error) {
-            alert("登入失敗", error.response.data.message);
+            // alert("登入失敗", error.response.data.message);
+            dispatch(createAsyncMessage({
+                success: false,
+                message: error.response?.data?.message || "登入失敗，請檢查帳號密碼"
+            }));
         }
     }
 
@@ -36,14 +46,18 @@ function Login() {
             return;
         }
         if (authData) {
-            const {token, expired} = authData; 
+            const { token, expired } = authData;
             document.cookie = `hexToken=${token}; expires=${new Date(expired)};path=/`;
             axios.defaults.headers.common.Authorization = token;
-            alert("登入成功");
+            // alert("登入成功");
+            dispatch(createAsyncMessage({
+                success: true,
+                message: "登入成功"
+            }));
             navigate("/admin/products");
 
         }
-    },[authData,navigate]);
+    }, [authData, navigate, dispatch]);
 
 
 
@@ -89,7 +103,7 @@ function Login() {
                             disabled={!isValid}
                             style={{
                                 backgroundColor: isValid ? "#4CAF50" : "#ccc",
-                                cursor: isValid ? "pointer" : "not-allowed" 
+                                cursor: isValid ? "pointer" : "not-allowed"
                             }}
                         >
                             登入

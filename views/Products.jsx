@@ -1,10 +1,11 @@
 import axios from "axios"
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import ProductModal from "../component/ProductModal";
 import Pagination from "../component/Pagination";
 import * as bootstrap from "bootstrap";
+import { useDispatch } from "react-redux";
+import { createMessage } from "../slice/messageSlice";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -24,22 +25,29 @@ const initialProductState = {
 
 const Products = () => {
     const [products, setProducts] = useState([]);
+
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [isLoading, setIsLoading] = useState(false);
+
     const [pagination, setPagination] = useState({});
     const productModalRef = useRef(null);
     const [modalType, setModalType] = useState("");
     const [templateData, setTemplateData] = useState(initialProductState);
+
     //使用useCallback 優化，避免不必要的重新渲染
+    
     const getProductData = useCallback(async (page = 1) => {
         try {
             const { data } = await axios.get(`${API_BASE}/api/${API_PATH}/admin/products?page=${page}`);
             setProducts(data.products);
             setPagination(data.pagination);
         } catch (error) {
-            alert("取得產品資料失敗")
+            dispatch(createMessage(error.response.data));
+            // alert("取得產品資料失敗");
         }
-    }, []);
+    }, [dispatch]);
 
     //初始化，驗證與Modal實例化
     useEffect(() => {
@@ -53,7 +61,8 @@ const Products = () => {
                 await axios.post(`${API_BASE}/api/user/check`);
                 getProductData();
             } catch (error) {
-                console.log(error.response.data.message)
+                dispatch(createMessage(error.response.data));
+                // console.log(error.response.data.message)
                 navigate("/login");
             }
         };
@@ -95,7 +104,8 @@ const Products = () => {
             closeModal();
             getProductData(pagination.current_page);
         } catch (error) {
-            alert(`${isEdit ? "更新" : "新增"}失敗: ${error.response?.data?.message}`);
+            dispatch(createMessage(error.response.data));
+            // alert(`${isEdit ? "更新" : "新增"}失敗: ${error.response?.data?.message}`);
         }
     };
     //處理圖片上傳
@@ -109,7 +119,8 @@ const Products = () => {
             const { data } = await axios.post(`${API_BASE}/api/${API_PATH}/admin/upload`, formData);
             setTemplateData(prev => ({ ...prev, imageUrl: data.imageUrl }));
         } catch (error) {
-            alert("圖片上傳失敗", error);
+            dispatch(createMessage(error.response.data));
+            // alert("圖片上傳失敗", error);
         }
     }
     //通用輸入處理

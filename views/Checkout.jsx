@@ -3,6 +3,8 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { RotatingLines } from 'react-loader-spinner';
 import * as bootstrap from "bootstrap";  // Bootstrap Modal 初始化
+import { useDispatch } from "react-redux";
+import { createAsyncMessage } from "../slice/messageSlice";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -26,6 +28,8 @@ function Checkout() {
         reset,
     } = useForm();
 
+    const dispatch = useDispatch();
+
     //取得全部產品
     const getProducts = async (page = 1) => {
         try {
@@ -34,7 +38,13 @@ function Checkout() {
             setPagination(res.data.pagination);
 
         } catch (error) {
-            console.log("取得產品失敗", error.response.data);
+            dispatch(createAsyncMessage({
+                success: false,
+                message: error.response?.data?.message || "取得產品失敗"
+            }));
+            // dispatch(createAsyncMessage(error.response.data));
+
+            // console.error("取得產品失敗", error.response.data);
         }
     };
 
@@ -58,7 +68,11 @@ function Checkout() {
             const response = await axios.get(url);
             setCart(response.data.data);
         } catch (error) {
-            console.log(error.response.data);
+            dispatch(createAsyncMessage({
+                success: false,
+                message: error.response?.data?.message || "取得購物車失敗"
+            }));
+            // console.log(error.response.data);
         }
     };
     //加入購物車
@@ -71,9 +85,16 @@ function Checkout() {
             }
             const res = await axios.post(`${API_BASE}/api/${API_PATH}/cart`, { data });
             getCart();
-
+            dispatch(createAsyncMessage({
+                success: true,
+                message: res.response?.data?.message || "成功加入購物車"
+            }));
         } catch (error) {
-            console.error("加入購物車失敗", error.response.data);
+            dispatch(createAsyncMessage({
+                success: false,
+                message: error.response?.data?.message || "加入購物車失敗"
+            }))
+            // console.error("加入購物車失敗", error.response.data);
         } finally {
             setLoadingProductId(null);
             productModalRef.current.hide();
@@ -85,11 +106,20 @@ function Checkout() {
         try {
             const url = `${API_BASE}/api/${API_PATH}/cart/${id}`;
             await axios.delete(url);
-            alert("產品已成功刪除");
+            // alert("產品已成功刪除");
+            dispatch(createAsyncMessage({
+                success: true,
+                message: "產品已成功刪除"
+            }));
             getCart();
         } catch (error) {
-            console.log(error.response.data);
-
+            dispatch(createAsyncMessage({
+                success: false,
+                message: error.response?.data?.message || "刪除失敗"
+            }))
+            // console.log(error.response.data);
+        } finally {
+            setLoadingCartId(null);
         }
     }
     //清空購物車
@@ -97,9 +127,17 @@ function Checkout() {
         try {
             const url = `${API_BASE}/api/${API_PATH}/carts`;
             await axios.delete(url);
+            dispatch(createAsyncMessage({
+                success: true,
+                message: "購物車已清空"
+            }))
             getCart();
         } catch (error) {
-            console.log(error.response.data);
+            dispatch(createAsyncMessage({
+                success: false,
+                message: error.response?.data?.message || "清空購物車失敗"
+            }))
+            // console.log(error.response.data);
         }
     }
     //更新商品數量
@@ -111,9 +149,19 @@ function Checkout() {
                 qty,
             };
             await axios.put(url, { data });
+            dispatch(createAsyncMessage({
+                success: true,
+                message: "數量已更新"
+            }));
             getCart();
         } catch (error) {
-            console.log(error.response.data);
+            dispatch(createAsyncMessage({
+                success: false,
+                message: error.response?.data?.message || "更新數量失敗"
+            }));
+            // console.log(error.response.data);
+        } finally {
+            setLoadingCartId(null);
         }
     };
     //結帳送出訂單
@@ -121,7 +169,10 @@ function Checkout() {
         try {
             const url = `${API_BASE}/api/${API_PATH}/order`;
             if (!cart.carts.length || cart.carts.length === 0) {
-                alert("購物車沒有商品，無法結帳");
+                dispatch(createAsyncMessage({
+                    success: false,
+                    message: "購物車沒有商品，無法結帳"
+                }));
                 return;
             }
             setIsLoading(true);
@@ -131,12 +182,20 @@ function Checkout() {
                     message: data.message
                 }
             });
-            alert("訂單已送出!")
+            dispatch(createAsyncMessage({
+                success: true,
+                message: "訂單已送出!"
+            }));
+            // alert("訂單已送出!")
             reset();
             getCart();
         } catch (error) {
-            console.log("結帳失敗", error.response.data);
-            alert("結帳失敗，請稍後再試");
+            // console.log("結帳失敗", error.response.data);
+            // alert("結帳失敗，請稍後再試");
+            dispatch(createAsyncMessage({
+                success: false,
+                message: error.response?.data?.message || "結帳失敗，請稍後再試"
+            }));
         } finally {
             setIsLoading(false);
         }

@@ -1,32 +1,35 @@
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
+import { createAsyncMessage } from "../slice/messageSlice";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
 
-const showSuccess = () => {
-    Swal.fire({
-        title: "成功加入購物車",
-        text: "商品已成功加入購物車",
-        icon: "success",
-        confirmButtonText: "確定",
-        confirmButtonColor: "#3085d6",
-    });
-}
+// const showSuccess = () => {
+//     Swal.fire({
+//         title: "成功加入購物車",
+//         text: "商品已成功加入購物車",
+//         icon: "success",
+//         confirmButtonText: "確定",
+//         confirmButtonColor: "#3085d6",
+//     });
+// }
 
-const showError = () => {
-    Swal.fire({
-        title: "加入購物車失敗",
-        text: "商品無法加入購物車",
-        icon: "error",
-        confirmButtonText: "確定",
-    });
-}
+// const showError = () => {
+//     Swal.fire({
+//         title: "加入購物車失敗",
+//         text: "商品無法加入購物車",
+//         icon: "error",
+//         confirmButtonText: "確定",
+//     });
+// }
 
 const SingleProduct = () => {
     const location = useLocation();
     const product = location.state?.productData.product;
+    const dispatch = useDispatch();
     if (!product) {
         return <div className="container mt-4">沒有可用的產品資料!!</div>
     }
@@ -38,10 +41,18 @@ const SingleProduct = () => {
             }
             const res = await axios.post(`${API_BASE}/api/${API_PATH}/cart`, { data });
             //成功時的提示
-            showSuccess();
+            // showSuccess();
+            dispatch(createAsyncMessage({
+                success: true,
+                message: res.response?.data?.message || "加入購物車成功"
+            }));
         } catch (error) {
             // console.error("加入購物車失敗",error);
-            showError();
+            // showError();
+            dispatch(createAsyncMessage({
+                success: false,
+                message: error.response?.data?.message ||"加入購物車失敗"
+            }));
         }
     }
     return (

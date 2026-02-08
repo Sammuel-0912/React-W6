@@ -1,8 +1,10 @@
-import { Outlet, Link, NavLink } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
+import MessageToast from '../component/MessageToast';
 
 const Layout = () => {
     return (
         <div>
+            <MessageToast />
             <header>
                 <nav className="mt-5">
                     <NavLink className="h4 mt-5 mx-2" to="/">
