@@ -382,9 +382,9 @@ function Checkout() {
                                         type="button"
                                         className="btn btn-outline-danger"
                                         onClick={() => addToCart(product.id, 1)}
-                                        disabled={loadingCartId === product.id}
+                                        disabled={loadingProductId === product.id}
                                     >加入購物車
-                                        {loadingCartId === product.id ? (
+                                        {loadingProductId === product.id ? (
                                             <RotatingLines
                                                 strokeColor="#fff"
                                                 strokeWidth="5"
